@@ -18,6 +18,14 @@ import androidx.core.net.toUri
 class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Ensure app theme matches system light/dark mode
+        try {
+            val delegateClass = Class.forName("androidx.appcompat.app.AppCompatDelegate")
+            val modeField = delegateClass.getField("MODE_NIGHT_FOLLOW_SYSTEM")
+            val modeValue = modeField.getInt(null)
+            val setDefaultNightMode = delegateClass.getMethod("setDefaultNightMode", Int::class.java)
+            setDefaultNightMode.invoke(null, modeValue)
+        } catch (_: Exception) {}
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
