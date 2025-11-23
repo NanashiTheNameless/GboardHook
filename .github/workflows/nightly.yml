@@ -20,6 +20,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Initialize submodules
+        run: git submodule update --init --recursive
+
+      - name: Build XposedBridge API JAR
+        run: |
+          cd xposedbridge
+          ./gradlew :api:build
+          mkdir -p ../app/libs
+          cp api/build/libs/api-82.jar ../app/libs/api-82.jar
+
       - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
