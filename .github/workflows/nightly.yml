@@ -21,6 +21,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Replace "localbuild" in version with commit SHA7
+        run: |
+          GIT_SHA7=$(git rev-parse --short HEAD)
+          sed -i "s/localbuild/$GIT_SHA7/g" app/build.gradle
+
 
       - name: Set up JDK
         uses: actions/setup-java@v5
