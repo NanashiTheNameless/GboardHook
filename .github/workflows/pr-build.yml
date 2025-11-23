@@ -209,8 +209,7 @@ jobs:
               '- ✔ You understand this may compromise your device security',
               '',
               '**BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**',
-              '',
-              '---'
+              ''
             ];
             const commentBody = lines.join('\n');
             
