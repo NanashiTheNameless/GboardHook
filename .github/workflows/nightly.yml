@@ -22,9 +22,11 @@ jobs:
           fetch-depth: 0
 
       - name: Replace "localbuild" in version with commit SHA7
+        id: name_replace
         run: |
           GIT_SHA7=$(git rev-parse --short HEAD)
           sed -i "s/localbuild/$GIT_SHA7/g" app/build.gradle
+          echo "GIT_SHA7=$GIT_SHA7" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK
         uses: actions/setup-java@v5
@@ -90,7 +92,7 @@ jobs:
             const releaseName = `Nightly (${new Date().toISOString().slice(0, 10)})`;
             let release = await findRelease();
 
-            const apkAssetName = "GboardHook-nightly-$$.apk";
+            const apkAssetName = "GboardHook-nightly-${{ steps.name_replace.outputs.GIT_SHA7 }}.apk";
             const apkUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${apkAssetName}`;
             const releaseBody = `Download the latest APK: [${apkAssetName}](${apkUrl})`;
 
@@ -126,7 +128,7 @@ jobs:
           upload_url: ${{ steps.release.outputs.upload_url }}
           release_id: ${{ steps.release.outputs.release_id }}
           asset_path: ${{ steps.locate_apk.outputs.apk_path }}
-          asset_name: "GboardHook-nightly-$$.apk"
+          asset_name: "GboardHook-nightly-${{ steps.name_replace.outputs.GIT_SHA7 }}.apk"
           asset_content_type: application/vnd.android.package-archive
           max_releases: 5
           ignore_hash: false
