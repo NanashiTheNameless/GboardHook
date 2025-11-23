@@ -4,7 +4,8 @@
     <application
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:label="GboardHook">
+        android:label="GboardHook"
+        android:theme="@style/AppTheme">
         <activity
             android:name="dev.namelessnanashi.gboardhook.MainActivity"
             android:exported="true">
