@@ -90,10 +90,20 @@ class PluginEntry : IXposedHookLoadPackage {
                     val spKeyMethod = "SP_KEY_METHOD"
                     val spKeyMethodReadConfig = "SP_KEY_METHOD_READ_CONFIG"
                     val spKeyVersion = "SP_KEY_VERSION"
-                    val versionCode = context.packageManager.getPackageInfo(
-                        context.packageName,
-                        0
-                    ).versionCode
+                        val versionCode = try {
+                            val pkgInfo = context.packageManager.getPackageInfo(
+                                context.packageName,
+                                0
+                            )
+                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+                                pkgInfo.longVersionCode.toInt()
+                            } else {
+                                @Suppress("DEPRECATION")
+                                pkgInfo.versionCode
+                            }
+                        } catch (e: Exception) {
+                            -1
+                        }
                     val gboardVersion = sp.getInt(spKeyVersion, -1)
                     val isSameVersion = versionCode == gboardVersion
                     val methodStr = sp.getString(spKeyMethod, null)
@@ -168,7 +178,12 @@ class PluginEntry : IXposedHookLoadPackage {
                         } else null
                         val arg2 = param.args[2].toString()
                         val arg3 = if (param.args[3] != null) {
-                            param.args[3] as Array<String>
+                            (param.args[3] as? Array<*>)?.let {
+                                if (it.all { item -> item is String }) {
+                                    @Suppress("UNCHECKED_CAST")
+                                    it as Array<String>
+                                } else null
+                            }
                         } else null
                         val arg4 = param.args[4]
                         log("query, arg0=$arg0, arg1=${arg1?.joinToString()}, arg2=$arg2, arg3=${arg3?.joinToString()}, arg4=$arg4")
