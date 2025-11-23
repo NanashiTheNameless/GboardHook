@@ -1,4 +1,4 @@
-package com.chenyue404.gboardhook
+package dev.namelessnanashi.gboardhook
 
 import android.app.Activity
 import android.content.Intent

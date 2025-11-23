@@ -1,4 +1,7 @@
 # GboardHook
+
+**ALL CREDIT GOES TO <https://github.com/chenyue404/GboardHook> THIS IS A FORK FOR MY PERSONAL USE**
+
 GboardHook
 Modify clipboard display count and expiration time
 

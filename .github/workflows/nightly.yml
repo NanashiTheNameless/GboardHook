@@ -1,0 +1,121 @@
+name: Nightly Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Generate CI signing config
+        run: |
+          mkdir -p app/AndroidKeystore
+          keytool -genkeypair -noprompt \
+            -dname "CN=CI, OU=CI, O=CI, L=None, S=None, C=US" \
+            -alias debug -keyalg RSA -keysize 2048 -validity 36500 \
+            -storetype PKCS12 \
+            -keystore app/AndroidKeystore/debug.keystore \
+            -storepass android -keypass android
+          cat > app/AndroidKeystore/keystore.properties <<'EOF'
+          storeFile=AndroidKeystore/debug.keystore
+          storePassword=android
+          keyAlias=debug
+          keyPassword=android
+          EOF
+
+      - name: Build release APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
+
+      - name: Locate APK
+        id: locate_apk
+        run: |
+          apk_path=$(ls app/build/outputs/apk/release/*.apk | head -n 1)
+          echo "apk_path=$apk_path" >> "$GITHUB_OUTPUT"
+
+      - name: Create or update nightly tag
+        uses: NanashiTheNameless/action-create-tag@main
+        with:
+          tag: nightly
+          message: "Nightly build"
+          force_push_tag: true
+          tag_exists_error: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Ensure nightly release exists
+        id: release
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const tag = 'nightly';
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+
+            async function findRelease() {
+              try {
+                return await github.rest.repos.getReleaseByTag({ owner, repo, tag });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                return null;
+              }
+            }
+
+            const releaseName = `Nightly (${new Date().toISOString().slice(0, 10)})`;
+            let release = await findRelease();
+
+            if (!release) {
+              release = await github.rest.repos.createRelease({
+                owner,
+                repo,
+                tag_name: tag,
+                name: releaseName,
+                draft: false,
+                prerelease: true,
+              });
+            } else {
+              release = { data: (await github.rest.repos.updateRelease({
+                owner,
+                repo,
+                release_id: release.data.id,
+                tag_name: tag,
+                name: releaseName,
+                draft: false,
+                prerelease: true,
+              })).data };
+            }
+
+            core.setOutput('upload_url', release.data.upload_url);
+            core.setOutput('release_id', release.data.id);
+
+      - name: Publish nightly asset
+        uses: NanashiTheNameless/deploy-nightly@master
+        with:
+          upload_url: ${{ steps.release.outputs.upload_url }}
+          release_id: ${{ steps.release.outputs.release_id }}
+          asset_path: ${{ steps.locate_apk.outputs.apk_path }}
+          asset_name: "GboardHook-nightly-$$.apk"
+          asset_content_type: application/vnd.android.package-archive
+          max_releases: 14
+          ignore_hash: false
+          token: ${{ secrets.GITHUB_TOKEN }}

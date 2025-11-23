@@ -16,7 +16,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.chenyue404.gboardhook"
+        applicationId "dev.namelessnanashi.gboardhook"
         minSdk 23
         targetSdk 31
         versionCode 8
@@ -85,7 +85,7 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    namespace 'com.chenyue404.gboardhook'
+    namespace 'dev.namelessnanashi.gboardhook'
 }
 
 dependencies {
