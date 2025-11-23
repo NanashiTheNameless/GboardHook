@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="After applying, Gboard needs to be restarted\nFirst-time application requires phone restart\nhttps://github.com/chenyue404/GboardHook"
+        android:text="After applying, Gboard needs to be restarted\nFirst-time application requires phone restart\nhttps://github.com/NanashiTheNameless/GboardHook\nThis Modified fork by NanashiTheNameless\nOriginal by chenyue404\n"
         android:textIsSelectable="true" />
 
 </LinearLayout>

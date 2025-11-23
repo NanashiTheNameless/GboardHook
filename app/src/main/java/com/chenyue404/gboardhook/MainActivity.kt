@@ -64,7 +64,7 @@ class MainActivity : Activity() {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,
-                    "https://github.com/chenyue404/GboardHook".toUri()
+                    "https://github.com/NanashiTheNameless/GboardHook".toUri()
                 )
             )
         }
