@@ -13,12 +13,12 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk 34
+    compileSdk 36
 
     defaultConfig {
         applicationId "dev.namelessnanashi.gboardhook"
         minSdk 23
-        targetSdk 34
+        targetSdk 36
         versionCode 9
         versionName "1.2.0"
     }
@@ -86,10 +86,14 @@ android {
         jvmTarget = '21'
     }
     namespace 'dev.namelessnanashi.gboardhook'
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.17.0'
-    implementation files('libs/api-82.jar')
+    implementation files('../libs/api-82.jar')
     implementation 'org.luckypray:dexkit:2.0.7'
 }
