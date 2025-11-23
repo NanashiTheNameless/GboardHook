@@ -34,6 +34,15 @@ class MainActivity : Activity() {
         val et1 = findViewById<EditText>(R.id.et1)
         val bt0 = findViewById<Button>(R.id.bt0)
         val swLog = findViewById<SwitchMaterial>(R.id.swLog)
+        val tvHint = findViewById<TextView>(R.id.tvHint)
+
+        tvHint.text = listOf(
+            getString(R.string.restart_requirement),
+            getString(R.string.first_setup),
+            getString(R.string.repo_link),
+            getString(R.string.fork_credit),
+            getString(R.string.original_credit)
+        ).joinToString("\n")
 
         val pref: SharedPreferences? = try {
             getSharedPreferences(PluginEntry.SP_FILE_NAME, MODE_PRIVATE)
@@ -68,7 +77,7 @@ class MainActivity : Activity() {
                         data = "package:${PluginEntry.PACKAGE_NAME}".toUri()
                     })
         }
-        findViewById<TextView>(R.id.tvHint).setOnClickListener {
+        tvHint.setOnClickListener {
             startActivity(
                 Intent(
                     Intent.ACTION_VIEW,

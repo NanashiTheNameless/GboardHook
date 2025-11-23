@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ignore_package_name_restriction">Ignore package name restriction (check if you changed Gboard package name, otherwise ignore)</string>
-    <string name="log_switch">Log switch</string>
+    <string name="ignore_package_name_restriction">Ignore package name restriction (Enable if you changed Gboard package name)</string>
+    <string name="log_switch">Enable extra debug logging</string>
     <string name="clipboard_capacity_hint">Clipboard capacity, default 10</string>
     <string name="clipboard_retention_hint">Clipboard retention time, default 3 days, in milliseconds</string>
     <string name="apply">Apply</string>
-    <string name="main_hint">After applying, Gboard needs to be restarted\nFirst-time application requires phone restart\nhttps://github.com/NanashiTheNameless/GboardHook\nThis Modified fork is by NanashiTheNameless\nOriginal is by chenyue404</string>
+    <string name="restart_requirement">After applying, Gboard needs to be restarted</string>
+    <string name="first_setup">On first setup a phone restart is required</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">This Modified fork is by NanashiTheNameless</string>
+    <string name="original_credit">Original is by chenyue404</string>
 </resources>
