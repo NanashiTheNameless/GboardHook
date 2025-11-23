@@ -25,16 +25,16 @@ jobs:
         id: vars
         run: |
           GIT_SHA7=$(git rev-parse --short HEAD)
+          echo "GIT_SHA7=$GIT_SHA7"
           echo "GIT_SHA7=$GIT_SHA7" >> "$GITHUB_OUTPUT"
           DATE=$(date -u +'%Y.%m.%d')
+          echo "DATE=$DATE"
           echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
 
       - name: Replace "localbuild" in version with commit SHA7
         id: name_replace
         run: |
-          GIT_SHA7=$(git rev-parse --short HEAD)
-          sed -i "s/localbuild/$GIT_SHA7/g" app/build.gradle
-          echo "GIT_SHA7=$GIT_SHA7" >> "$GITHUB_OUTPUT"
+          sed -i "s/localbuild/${{ steps.vars.outputs.GIT_SHA7 }}/g" app/build.gradle
 
       - name: Set up JDK
         uses: actions/setup-java@v5
