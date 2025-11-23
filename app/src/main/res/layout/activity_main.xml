@@ -4,79 +4,75 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/transparent"
+    app:strokeWidth="0dp"
     android:layout_margin="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="GboardHook"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+        />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ignore package name restriction (check if you changed Gboard package name, otherwise ignore)" />
+        android:text="@string/ignore_package_name_restriction" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swLog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log switch" />
+        android:text="@string/log_switch" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Clipboard capacity, default 10">
+            android:hint="@string/clipboard_capacity_hint">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:numeric="integer"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
-        android:id="@+id/et0"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Clipboard capacity, default 10"
-        android:inputType="number"
-        android:numeric="integer"
-        android:singleLine="true" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Clipboard retention time, default 3 days, in milliseconds">
+            android:hint="@string/clipboard_retention_hint">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number"
-                android:numeric="integer"
                 android:singleLine="true" />
         </com.google.android.material.textfield.TextInputLayout>
-        android:id="@+id/et1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="Clipboard retention time, default 3 days, in milliseconds"
-        android:inputType="number"
-        android:numeric="integer"
-        android:singleLine="true" />
 
         <com.google.android.material.button.MaterialButton
         android:id="@+id/bt0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Apply" />
+        android:text="@string/apply" />
 
         <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="After applying, Gboard needs to be restarted\nFirst-time application requires phone restart\nhttps://github.com/NanashiTheNameless/GboardHook\nThis Modified fork by NanashiTheNameless\nOriginal by chenyue404\n"
+        android:text="@string/main_hint"
         android:textIsSelectable="true" />
 
 </LinearLayout>

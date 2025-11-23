@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Switch
+import com.google.android.material.switchmaterial.SwitchMaterial
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.net.toUri
@@ -29,11 +29,11 @@ class MainActivity : Activity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val sw0 = findViewById<Switch>(R.id.sw0)
+        val sw0 = findViewById<SwitchMaterial>(R.id.sw0)
         val et0 = findViewById<EditText>(R.id.et0)
         val et1 = findViewById<EditText>(R.id.et1)
         val bt0 = findViewById<Button>(R.id.bt0)
-        val swLog = findViewById<Switch>(R.id.swLog)
+        val swLog = findViewById<SwitchMaterial>(R.id.swLog)
 
         val pref: SharedPreferences? = try {
             getSharedPreferences(PluginEntry.SP_FILE_NAME, MODE_PRIVATE)
