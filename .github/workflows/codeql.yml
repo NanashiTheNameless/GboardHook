@@ -91,6 +91,9 @@ jobs:
     # to build your code.
     # ℹ️ Command-line programs to run using the OS shell.
     # 📚 See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idstepsrun
+    - name: Ensure keystore directory exists
+      run: mkdir -p app/AndroidKeystore
+
     - name: Decode keystore
       run: |
         echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 -d > app/AndroidKeystore/release-key.jks
