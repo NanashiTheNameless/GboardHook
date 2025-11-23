@@ -28,8 +28,8 @@ class MainActivity : Activity() {
         val swLog = findViewById<Switch>(R.id.swLog)
 
         val pref: SharedPreferences? = try {
-            getSharedPreferences(PluginEntry.SP_FILE_NAME, MODE_WORLD_READABLE)
-        } catch (e: SecurityException) {
+            getSharedPreferences(PluginEntry.SP_FILE_NAME, MODE_PRIVATE)
+        } catch (e: Exception) {
             Log.d("MainActivity", "getSharedPreferences failed---$e")
             Toast.makeText(this, "Failed to read configuration", Toast.LENGTH_SHORT).show()
             null
