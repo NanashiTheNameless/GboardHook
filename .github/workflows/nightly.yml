@@ -42,26 +42,18 @@ jobs:
           distribution: zulu
           java-version: "25"
 
-      - name: Generate CI signing config
+      - name: Decode keystore
         run: |
-          mkdir -p app/AndroidKeystore
-          keytool -genkeypair -noprompt \
-            -dname "CN=CI, OU=CI, O=CI, L=None, S=None, C=US" \
-            -alias debug -keyalg RSA -keysize 2048 -validity 36500 \
-            -storetype PKCS12 \
-            -keystore app/AndroidKeystore/debug.keystore \
-            -storepass android -keypass android
-          cat > app/AndroidKeystore/keystore.properties <<'EOF'
-          storeFile=AndroidKeystore/debug.keystore
-          storePassword=android
-          keyAlias=debug
-          keyPassword=android
-          EOF
+          echo "${{ secrets.RELEASE_KEYSTORE }}" | base64 -d > app/AndroidKeystore/release-key.jks
 
       - name: Build release APK
+        env:
+          KEYSTORE_FILE: app/AndroidKeystore/release-key.jks
+          KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
-          chmod +x gradlew
-          ./gradlew --no-daemon assembleRelease
+          ./gradlew assembleRelease
 
       - name: Locate APK
         id: locate_apk
