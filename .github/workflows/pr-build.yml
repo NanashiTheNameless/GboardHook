@@ -181,7 +181,7 @@ jobs:
               '',
               'A debug APK has been built for this PR and is available for 14 days.',
               '',
-              `**Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://nightly.link/${repo.owner}/${repo.repo}/actions/runs/${runId}/GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug.apk)`,
+              `**Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://nightly.link/${repo.owner}/${repo.repo}/actions/runs/${runId}/GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug)`,
               '',
               '**Build Info**:',
               `- Commit: \`${{ steps.vars.outputs.GIT_SHA7 }}\``,
@@ -200,7 +200,7 @@ jobs:
               '- ✖ UNVERIFIED CODE: Contains unreviewed code changes that may be malicious or buggy',
               '- ✖ NO WARRANTY: This build comes with ABSOLUTELY NO WARRANTY of any kind',
               '- ✖ POTENTIAL RISKS: May contain malware, backdoors, data theft code, or cause device instability',
-              '- ⌛ TEMPORARY KEY: Signed with a debug key that expires in 14 days',
+              '- ⏲ TEMPORARY KEY: Signed with a debug key that expires in 14 days',
               '',
               '⚠ WARNING: DO NOT INSTALL UNLESS:',
               '- ✔ You are an experienced developer who understands the risks',
@@ -209,8 +209,7 @@ jobs:
               '- ✔ You understand this may compromise your device security',
               '',
               '**BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**',
-              '',
-              '---'
+              ''
             ];
             const commentBody = lines.join('\n');
             
