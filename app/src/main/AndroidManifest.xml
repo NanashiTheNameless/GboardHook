@@ -20,7 +20,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="修改Gboard剪切板的时间数量限制" />
+            android:value="Modify Gboard clipboard time and quantity limits" />
         <meta-data
             android:name="xposedscope"
             android:resource="@array/xposed_scope" />

@@ -189,7 +189,7 @@ class PluginEntry : IXposedHookLoadPackage {
                                 param.args[3] = it
                             }
                             log(
-                                "修改时间限制, ${
+                                "Modified time limit, ${
                                     SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT)
                                         .format(Date(afterTimeStamp))
                                 }"
@@ -197,7 +197,7 @@ class PluginEntry : IXposedHookLoadPackage {
                         }
                         if (arg4 == "timestamp DESC limit 5") {
                             param.args[4] = "timestamp DESC limit $clipboardTextSize"
-                            log("修改大小限制, $clipboardTextSize")
+                            log("Modified size limit, $clipboardTextSize")
                         }
                     }
 
@@ -250,7 +250,7 @@ class PluginEntry : IXposedHookLoadPackage {
 //                val className = entries.nextElement()
 //                try {
 //                    val clazz = lpparam.classLoader.loadClass(className)
-//                    // 查找是否有 getDumpableTag 方法
+//                    // Check if getDumpableTag method exists
 //                    val method = clazz.declaredMethods.firstOrNull {
 //                        it.parameterTypes.contentEquals(
 //                            arrayOf(
@@ -259,7 +259,7 @@ class PluginEntry : IXposedHookLoadPackage {
 //                        ) && it.returnType == Void.TYPE
 //                    } ?: continue
 //
-//                    // 找到了候选类，hook它
+//                    // Found candidate class, hook it
 //                    log("Hooking candidate: $className")
 //                    findAndHookMethod(
 //                        clazz,
@@ -278,7 +278,7 @@ class PluginEntry : IXposedHookLoadPackage {
 //                        }
 //                    )
 //                } catch (e: Throwable) {
-//                    // 加载失败的类忽略
+//                    // Ignore classes that fail to load
 //                }
 //            }
 //        } catch (e: Throwable) {
@@ -357,7 +357,7 @@ class PluginEntry : IXposedHookLoadPackage {
     }
 
     /**
-     * 写死enable_clipboard_entity_extraction的值，不然limit永远是100，查出来就只有5个
+     * Hardcode the value of enable_clipboard_entity_extraction, otherwise limit is always 100, and only 5 are retrieved
      */
     private fun hookReadConfig(dexMethod: DexMethod, classLoader: ClassLoader) {
         val methodName = dexMethod.name

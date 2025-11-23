@@ -33,7 +33,7 @@ android {
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
             } else {
-                // 如果文件不存在，可以给出默认提示或抛异常
+                // If the file doesn't exist, provide a default message or throw an exception
                 println "Warning: keystore.properties not found, using debug signing."
             }
         }
@@ -52,28 +52,28 @@ android {
 
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
-            // 获取版本名和版本号
+            // Get version name and version code
             def versionName = variant.versionName
             def versionCode = variant.versionCode
 
-            // 获取 buildType 和 flavor
+            // Get buildType and flavor
             def buildType = variant.buildType.name
-            def flavor = variant.flavorName ?: "" // 如果没有 flavor，则为空
+            def flavor = variant.flavorName ?: "" // If no flavor, then empty
             def environment = flavor ? "${flavor}_${buildType}" : buildType
 
-            // 获取当前 UTC 时间
+            // Get current UTC time
             def date = new Date()
             def sdf = new SimpleDateFormat("yyyyMMdd_HHmmss")
             sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
             def formattedDate = sdf.format(date) + "Z"
 
-            // 应用名称
+            // Application name
             def appName = "GboardHook"
 
-            // 构造 APK 文件名
+            // Construct APK file name
             def apkName = "${appName}_${environment}_${versionName}_${versionCode}_${formattedDate}.apk"
 
-            // 设置输出文件名
+            // Set output file name
             output.outputFileName = apkName
         }
     }
