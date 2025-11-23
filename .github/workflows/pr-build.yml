@@ -18,24 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       is_owner: ${{ steps.check_owner.outputs.is_owner }}
-      pr_number: ${{ steps.get_pr.outputs.pr_number }}
-      pr_ref: ${{ steps.get_pr.outputs.pr_ref }}
     steps:
-      - name: Get PR details
-        id: get_pr
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const prNumber = context.payload.issue.number;
-            const prData = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            
-            core.setOutput('pr_number', prNumber);
-            core.setOutput('pr_ref', prData.data.head.ref);
-
       - name: Check if commenter is repo owner
         id: check_owner
         uses: actions/github-script@v8
@@ -58,19 +41,12 @@ jobs:
             
             if (commenter === repoOwner) {
               core.setOutput('is_owner', 'true');
-              // React with rocket to acknowledge
+              // React with checkmark to acknowledge
               await github.rest.reactions.createForIssueComment({
                 owner: repo.owner,
                 repo: repo.repo,
                 comment_id: comment.id,
-                content: 'rocket'
-              });
-              
-              await github.rest.issues.createComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                issue_number: context.issue.number,
-                body: '[REBUILD] Rebuild triggered by repository owner. Starting new build...'
+                content: 'heavy_check_mark'
               });
             } else {
               core.setOutput('is_owner', 'false');
@@ -96,27 +72,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Get PR ref for rebuild
-        if: github.event_name == 'issue_comment'
-        id: pr_info
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const prNumber = context.payload.issue.number;
-            const prData = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: prNumber
-            });
-            
-            core.setOutput('ref', prData.data.head.ref);
-            core.setOutput('sha', prData.data.head.sha);
-
       - name: Check out repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event_name == 'issue_comment' && steps.pr_info.outputs.ref || '' }}
+          ref: ${{ github.event.pull_request.head.ref || github.head_ref }}
+
+      - name: Post rebuild trigger comment
+        if: github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true'
+        id: rebuild_comment
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const response = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '[REBUILD] Rebuild triggered by repository owner. Starting new build...'
+            });
+            core.setOutput('comment_id', response.data.id);
+            core.exportVariable('REBUILD_COMMENT_ID', response.data.id);
 
       - name: Gather variables
         id: vars
@@ -158,7 +133,7 @@ jobs:
             -validity 14 \
             -storepass debug-pr-password \
             -keypass debug-pr-password \
-            -dname "CN=GitHub PR Debug Key, OU=CI, O=GboardHook"
+            -dname "CN=GitHub PR Debug Key, OU=CI, O=GboardHook-PR-Test-Build"
 
       - name: Build debug APK
         env:
@@ -199,45 +174,58 @@ jobs:
             
             const runId = context.runId;
             const repo = context.repo;
+            const rebuildCommentId = process.env.REBUILD_COMMENT_ID || '';
+            const heading = context.eventName === 'issue_comment' ? '## [BUILD] Testing/Debug Build Ready (rebuild complete)' : '## [BUILD] Testing/Debug Build Ready';
+            const lines = [
+              heading,
+              '',
+              'A debug APK has been built for this PR and is available for 14 days.',
+              '',
+              `**Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://nightly.link/${repo.owner}/${repo.repo}/actions/runs/${runId}/GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug.apk)`,
+              '',
+              '**Build Info**:',
+              `- Commit: \`${{ steps.vars.outputs.GIT_SHA7 }}\``,
+              `- Date: \`${{ steps.vars.outputs.DATE }}\``,
+              `- APK: \`${{ steps.locate_apk.outputs.apk_name }}\``,
+              '',
+              '---',
+              '',
+              '## ⚠ WARNING - CRITICAL WARNING - READ BEFORE DOWNLOADING ⚠',
+              '',
+              '**THIS IS AN UNTESTED PR BUILD FOR TESTING PURPOSES ONLY**',
+              '',
+              '⚠ DANGER - USE AT YOUR OWN RISK ⚠',
+              '',
+              '- ✖ NOT SAFE: This build has NOT been reviewed or tested for security vulnerabilities',
+              '- ✖ UNVERIFIED CODE: Contains unreviewed code changes that may be malicious or buggy',
+              '- ✖ NO WARRANTY: This build comes with ABSOLUTELY NO WARRANTY of any kind',
+              '- ✖ POTENTIAL RISKS: May contain malware, backdoors, data theft code, or cause device instability',
+              '- ⌛ TEMPORARY KEY: Signed with a debug key that expires in 14 days',
+              '',
+              '⚠ WARNING: DO NOT INSTALL UNLESS:',
+              '- ✔ You are an experienced developer who understands the risks',
+              '- ✔ You have reviewed the PR code changes thoroughly',
+              '- ✔ You accept full responsibility for any damage or data loss',
+              '- ✔ You understand this may compromise your device security',
+              '',
+              '**BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**',
+              '',
+              '---'
+            ];
+            const commentBody = lines.join('\n');
             
-            const comment = `## [BUILD] Testing/Debug Build Ready
-            
-            A debug APK has been built for this PR and is available for 7 days.
-            
-            **Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://github.com/${repo.owner}/${repo.repo}/actions/runs/${runId})
-            
-            **Build Info**:
-            - Commit: \`${{ steps.vars.outputs.GIT_SHA7 }}\`
-            - Date: \`${{ steps.vars.outputs.DATE }}\`
-            - APK: \`${{ steps.locate_apk.outputs.apk_name }}\`
-            
-            ---
-            
-            ## [WARNING] **CRITICAL WARNING - READ BEFORE DOWNLOADING** [WARNING]
-            
-            **THIS IS AN UNTESTED PR BUILD FOR TESTING PURPOSES ONLY**
-            
-            [DANGER] **DANGER - USE AT YOUR OWN RISK** [DANGER]
-            
-            - [X] **NOT SAFE**: This build has NOT been reviewed or tested for security vulnerabilities
-            - [X] **UNVERIFIED CODE**: Contains unreviewed code changes that may be malicious or buggy
-            - [X] **NO WARRANTY**: This build comes with ABSOLUTELY NO WARRANTY of any kind
-            - [X] **POTENTIAL RISKS**: May contain malware, backdoors, data theft code, or cause device instability
-            - [EXPIRES] **TEMPORARY KEY**: Signed with a debug key that expires in 14 days
-            
-            **[WARNING] DO NOT INSTALL UNLESS:**
-            - [OK] You are an experienced developer who understands the risks
-            - [OK] You have reviewed the PR code changes thoroughly
-            - [OK] You accept full responsibility for any damage or data loss
-            - [OK] You understand this may compromise your device security
-            
-            **BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**
-            
-            ---`;
-            
-            github.rest.issues.createComment({
-              owner: repo.owner,
-              repo: repo.repo,
-              issue_number: prNumber,
-              body: comment
-            });
+            if (context.eventName === 'issue_comment' && rebuildCommentId) {
+              await github.rest.issues.updateComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                comment_id: Number(rebuildCommentId),
+                body: commentBody
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: prNumber,
+                body: commentBody
+              });
+            }
