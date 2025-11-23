@@ -51,7 +51,7 @@ jobs:
 
       - name: Build release APK
         env:
-          KEYSTORE_FILE: app/AndroidKeystore/release-key.jks
+          KEYSTORE_FILE: AndroidKeystore/release-key.jks
           KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
