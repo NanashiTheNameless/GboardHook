@@ -2,7 +2,6 @@ import java.text.SimpleDateFormat
 
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
 }
 
 def keystorePropertiesFile = file("./AndroidKeystore/keystore.properties")
@@ -45,40 +44,9 @@ android {
         }
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            // Get version name and version code
-            def versionName = variant.versionName
-            def versionCode = variant.versionCode
-
-            // Get buildType and flavor
-            def buildType = variant.buildType.name
-            def flavor = variant.flavorName ?: "" // If no flavor, then empty
-            def environment = flavor ? "${flavor}_${buildType}" : buildType
-
-            // Get current UTC time
-            def date = new Date()
-            def sdf = new SimpleDateFormat("yyyyMMdd_HHmmss")
-            sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
-            def formattedDate = sdf.format(date) + "Z"
-
-            // Application name
-            def appName = "GboardHook"
-
-            // Construct APK file name
-            def apkName = "${appName}_${environment}_${versionName}_${versionCode}_${formattedDate}.apk"
-
-            // Set output file name
-            output.outputFileName = apkName
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
         targetCompatibility JavaVersion.VERSION_21
-    }
-    kotlinOptions {
-        jvmTarget = '21'
     }
     namespace 'dev.namelessnanashi.gboardhook'
 
@@ -87,9 +55,37 @@ android {
     }
 }
 
+kotlin {
+    jvmToolchain(21)
+}
+
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.outputs.forEach { output ->
+            def versionName = output.versionName.orElse("unspecified").get()
+            def versionCode = output.versionCode.orElse(0).get()
+
+            def buildType = variant.getBuildType()
+            def flavor = variant.getFlavorName() ?: ""
+            def environment = flavor ? "${flavor}_${buildType}" : buildType
+
+            def date = new Date()
+            def sdf = new SimpleDateFormat("yyyyMMdd_HHmmss")
+            sdf.setTimeZone(TimeZone.getTimeZone("UTC"))
+            def formattedDate = sdf.format(date) + "Z"
+
+            def appName = "GboardHook"
+            def apkName = "${appName}_${environment}_${versionName}_${versionCode}_${formattedDate}.apk"
+
+            output.outputFileName.set(apkName)
+        }
+    }
+}
+
 dependencies {
     implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'com.google.android.material:material:1.14.0-alpha07'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.3.0-RC'
     implementation files('../libs/api-82.jar')
     implementation 'org.luckypray:dexkit:2.0.7'
 }
