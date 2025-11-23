@@ -91,9 +91,7 @@ jobs:
             }
 
   build-debug:
-    if: |
-      github.event_name == 'pull_request' ||
-      (github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true')
+    if: always() && (github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true'))
     needs: [check-rebuild-command]
     runs-on: ubuntu-latest
 
