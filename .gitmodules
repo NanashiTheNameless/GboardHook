@@ -1,0 +1,3 @@
+[submodule "xposedbridge"]
+	path = xposedbridge
+	url = https://github.com/NanashiTheNameless/XposedBridge.git
