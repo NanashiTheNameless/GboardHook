@@ -95,8 +95,21 @@ jobs:
       if: matrix.build-mode == 'manual'
       shell: bash
       run: |
-        chmod +x gradlew
-        ./gradlew --no-daemon assembleRelease
+          mkdir -p app/AndroidKeystore
+          keytool -genkeypair -noprompt \
+            -dname "CN=CI, OU=CI, O=CI, L=None, S=None, C=US" \
+            -alias debug -keyalg RSA -keysize 2048 -validity 36500 \
+            -storetype PKCS12 \
+            -keystore app/AndroidKeystore/debug.keystore \
+            -storepass android -keypass android
+          cat > app/AndroidKeystore/keystore.properties <<'EOF'
+          storeFile=AndroidKeystore/debug.keystore
+          storePassword=android
+          keyAlias=debug
+          keyPassword=android
+          EOF
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleRelease
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
