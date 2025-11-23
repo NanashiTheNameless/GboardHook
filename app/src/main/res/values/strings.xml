@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ignore_package_name_restriction">Ignore package name restriction (Enable if you changed Gboard package name)</string>
+    <string name="ignore_package_name_restriction">Ignore package name restriction\n(Enable if you changed the Gboard package name)</string>
     <string name="log_switch">Enable extra debug logging</string>
     <string name="clipboard_capacity_hint">Clipboard capacity, default 10</string>
     <string name="clipboard_retention_hint">Clipboard retention time, default 3 days, in milliseconds</string>

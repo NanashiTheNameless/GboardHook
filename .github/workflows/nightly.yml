@@ -133,6 +133,6 @@ jobs:
           asset_path: ${{ steps.locate_apk.outputs.apk_path }}
           asset_name: "GboardHook-nightly-${{ steps.vars.outputs.DATE }}-${{ steps.vars.outputs.GIT_SHA7 }}.apk"
           asset_content_type: application/vnd.android.package-archive
-          max_releases: 5
+          max_releases: 1
           ignore_hash: false
           token: ${{ secrets.GITHUB_TOKEN }}
