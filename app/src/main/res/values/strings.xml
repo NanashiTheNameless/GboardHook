@@ -5,10 +5,5 @@
     <string name="clipboard_capacity_hint">Clipboard capacity, default 10</string>
     <string name="clipboard_retention_hint">Clipboard retention time, default 3 days, in milliseconds</string>
     <string name="apply">Apply</string>
-    <string name="main_hint">After applying, Gboard needs to be restarted
-First-time application requires phone restart
-https://github.com/NanashiTheNameless/GboardHook
-This Modified fork by NanashiTheNameless
-Original by chenyue404
-</string>
+    <string name="main_hint">After applying, Gboard needs to be restarted\nFirst-time application requires phone restart\nhttps://github.com/NanashiTheNameless/GboardHook\nThis Modified fork is by NanashiTheNameless\nOriginal is by chenyue404</string>
 </resources>
