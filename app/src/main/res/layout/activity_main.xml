@@ -1,23 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:layout_margin="16dp">
 
-    <Switch
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ignore package name restriction (check if you changed Gboard package name, otherwise ignore)" />
 
-    <Switch
+        <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/swLog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Log switch" />
 
-    <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Clipboard capacity, default 10">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et0"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:numeric="integer"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
         android:id="@+id/et0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -26,7 +45,18 @@
         android:numeric="integer"
         android:singleLine="true" />
 
-    <EditText
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Clipboard retention time, default 3 days, in milliseconds">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:numeric="integer"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
         android:id="@+id/et1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -35,13 +65,13 @@
         android:numeric="integer"
         android:singleLine="true" />
 
-    <Button
+        <com.google.android.material.button.MaterialButton
         android:id="@+id/bt0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Apply" />
 
-    <TextView
+        <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tvHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -50,3 +80,4 @@
         android:textIsSelectable="true" />
 
 </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
