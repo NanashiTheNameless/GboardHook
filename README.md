@@ -1,5 +1,5 @@
 # GboardHook
 GboardHook
-修改剪切板显示个数和过期时间
+Modify clipboard display count and expiration time
 
-enable_clipboard_entity_extraction会影响读取剪贴板的数量，原理不清楚，没找到关键代码，只能先写死false了🤪
+enable_clipboard_entity_extraction affects the number of clipboard entries that can be read. The principle is unclear, and the key code hasn't been found, so it can only be hardcoded to false for now 🤪
