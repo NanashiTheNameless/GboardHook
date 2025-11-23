@@ -1,0 +1,245 @@
+name: PR Build
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  check-rebuild-command:
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.comment.body == '/rebuild'
+    runs-on: ubuntu-latest
+    outputs:
+      is_owner: ${{ steps.check_owner.outputs.is_owner }}
+      pr_number: ${{ steps.get_pr.outputs.pr_number }}
+      pr_ref: ${{ steps.get_pr.outputs.pr_ref }}
+    steps:
+      - name: Get PR details
+        id: get_pr
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const prNumber = context.payload.issue.number;
+            const prData = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            
+            core.setOutput('pr_number', prNumber);
+            core.setOutput('pr_ref', prData.data.head.ref);
+
+      - name: Check if commenter is repo owner
+        id: check_owner
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const comment = context.payload.comment;
+            const repo = context.repo;
+            
+            // Get repository info to find owner
+            const repoInfo = await github.rest.repos.get({
+              owner: repo.owner,
+              repo: repo.repo
+            });
+            
+            const repoOwner = repoInfo.data.owner.login;
+            const commenter = comment.user.login;
+            
+            console.log(`Repository owner: ${repoOwner}`);
+            console.log(`Commenter: ${commenter}`);
+            
+            if (commenter === repoOwner) {
+              core.setOutput('is_owner', 'true');
+              // React with rocket to acknowledge
+              await github.rest.reactions.createForIssueComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                comment_id: comment.id,
+                content: 'rocket'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: context.issue.number,
+                body: '[REBUILD] Rebuild triggered by repository owner. Starting new build...'
+              });
+            } else {
+              core.setOutput('is_owner', 'false');
+              // React with confused to indicate not authorized
+              await github.rest.reactions.createForIssueComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                comment_id: comment.id,
+                content: 'confused'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: repo.owner,
+                repo: repo.repo,
+                issue_number: context.issue.number,
+                body: '[ERROR] Only the repository owner can trigger rebuilds.'
+              });
+            }
+
+  build-debug:
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true')
+    needs: [check-rebuild-command]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get PR ref for rebuild
+        if: github.event_name == 'issue_comment'
+        id: pr_info
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const prNumber = context.payload.issue.number;
+            const prData = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber
+            });
+            
+            core.setOutput('ref', prData.data.head.ref);
+            core.setOutput('sha', prData.data.head.sha);
+
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'issue_comment' && steps.pr_info.outputs.ref || '' }}
+
+      - name: Gather variables
+        id: vars
+        run: |
+          GIT_SHA7=$(git rev-parse --short HEAD)
+          echo "GIT_SHA7=$GIT_SHA7"
+          echo "GIT_SHA7=$GIT_SHA7" >> "$GITHUB_OUTPUT"
+          DATE=$(date -u +'%Y.%m.%d')
+          echo "DATE=$DATE"
+          echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "issue_comment" ]; then
+            PR_NUMBER=${{ github.event.issue.number }}
+          else
+            PR_NUMBER=${{ github.event.pull_request.number || 'manual' }}
+          fi
+          echo "PR_NUMBER=$PR_NUMBER"
+          echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
+
+      - name: Replace "localbuild" in version with PR info
+        run: |
+          sed -i "s/localbuild/pr${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}/g" app/build.gradle
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: "25"
+
+      - name: Ensure keystore directory exists
+        run: mkdir -p app/AndroidKeystore
+
+      - name: Generate temporary debug keystore with 14-day validity
+        run: |
+          keytool -genkeypair \
+            -keystore app/AndroidKeystore/debug-pr.jks \
+            -alias debug-pr-key \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 14 \
+            -storepass debug-pr-password \
+            -keypass debug-pr-password \
+            -dname "CN=GitHub PR Debug Key, OU=CI, O=GboardHook"
+
+      - name: Build debug APK
+        env:
+          KEYSTORE_FILE: AndroidKeystore/debug-pr.jks
+          KEYSTORE_PASSWORD: debug-pr-password
+          KEY_ALIAS: debug-pr-key
+          KEY_PASSWORD: debug-pr-password
+        run: |
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Locate APK
+        id: locate_apk
+        run: |
+          apk_path=$(ls app/build/outputs/apk/debug/*.apk | head -n 1)
+          echo "apk_path=$apk_path" >> "$GITHUB_OUTPUT"
+          apk_name=$(basename "$apk_path")
+          echo "apk_name=$apk_name" >> "$GITHUB_OUTPUT"
+
+      - name: Upload debug APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug
+          path: ${{ steps.locate_apk.outputs.apk_path }}
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Comment on PR with download link
+        if: always() && steps.locate_apk.outputs.apk_path
+        uses: actions/github-script@v8
+        with:
+          script: |
+            let prNumber;
+            if (context.eventName === 'issue_comment') {
+              prNumber = context.payload.issue.number;
+            } else {
+              prNumber = context.payload.pull_request.number;
+            }
+            
+            const runId = context.runId;
+            const repo = context.repo;
+            
+            const comment = `## [BUILD] Testing/Debug Build Ready
+            
+            A debug APK has been built for this PR and is available for 7 days.
+            
+            **Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://github.com/${repo.owner}/${repo.repo}/actions/runs/${runId})
+            
+            **Build Info**:
+            - Commit: \`${{ steps.vars.outputs.GIT_SHA7 }}\`
+            - Date: \`${{ steps.vars.outputs.DATE }}\`
+            - APK: \`${{ steps.locate_apk.outputs.apk_name }}\`
+            
+            ---
+            
+            ## [WARNING] **CRITICAL WARNING - READ BEFORE DOWNLOADING** [WARNING]
+            
+            **THIS IS AN UNTESTED PR BUILD FOR TESTING PURPOSES ONLY**
+            
+            [DANGER] **DANGER - USE AT YOUR OWN RISK** [DANGER]
+            
+            - [X] **NOT SAFE**: This build has NOT been reviewed or tested for security vulnerabilities
+            - [X] **UNVERIFIED CODE**: Contains unreviewed code changes that may be malicious or buggy
+            - [X] **NO WARRANTY**: This build comes with ABSOLUTELY NO WARRANTY of any kind
+            - [X] **POTENTIAL RISKS**: May contain malware, backdoors, data theft code, or cause device instability
+            - [EXPIRES] **TEMPORARY KEY**: Signed with a debug key that expires in 14 days
+            
+            **[WARNING] DO NOT INSTALL UNLESS:**
+            - [OK] You are an experienced developer who understands the risks
+            - [OK] You have reviewed the PR code changes thoroughly
+            - [OK] You accept full responsibility for any damage or data loss
+            - [OK] You understand this may compromise your device security
+            
+            **BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**
+            
+            ---`;
+            
+            github.rest.issues.createComment({
+              owner: repo.owner,
+              repo: repo.repo,
+              issue_number: prNumber,
+              body: comment
+            });
