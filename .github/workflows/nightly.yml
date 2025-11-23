@@ -86,6 +86,10 @@ jobs:
             const releaseName = `Nightly (${new Date().toISOString().slice(0, 10)})`;
             let release = await findRelease();
 
+            const apkAssetName = "GboardHook-nightly-$$.apk";
+            const apkUrl = `https://github.com/${owner}/${repo}/releases/download/${tag}/${apkAssetName}`;
+            const releaseBody = `Download the latest APK: [${apkAssetName}](${apkUrl})`;
+
             if (!release) {
               release = await github.rest.repos.createRelease({
                 owner,
@@ -93,7 +97,8 @@ jobs:
                 tag_name: tag,
                 name: releaseName,
                 draft: false,
-                prerelease: true,
+                prerelease: false,
+                body: releaseBody,
               });
             } else {
               release = { data: (await github.rest.repos.updateRelease({
@@ -103,7 +108,8 @@ jobs:
                 tag_name: tag,
                 name: releaseName,
                 draft: false,
-                prerelease: true,
+                prerelease: false,
+                body: releaseBody,
               })).data };
             }
 
