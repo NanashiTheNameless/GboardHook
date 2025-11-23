@@ -90,9 +90,6 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:1.17.0'
-    implementation 'de.robv.android.xposed:api:82'
-    implementation 'org.luckypray:dexkit:2.3.1'
-    repositories {
-        maven { url 'https://jitpack.io' }
-    }
+    implementation files('libs/api-82.jar')
+    implementation 'org.luckypray:dexkit:2.0.7'
 }
