@@ -51,7 +51,7 @@ jobs:
                 owner: repo.owner,
                 repo: repo.repo,
                 comment_id: comment.id,
-                content: 'heavy_check_mark'
+                content: 'rocket'
               });
             } else {
               core.setOutput('is_owner', 'false');
