@@ -195,7 +195,7 @@ jobs:
               '',
               '---',
               '',
-              '## ⚠ WARNING - CRITICAL WARNING - READ BEFORE DOWNLOADING ⚠',
+              '## ⚠ CRITICAL WARNING - READ BEFORE DOWNLOADING ⚠',
               '',
               '**THIS IS AN UNTESTED PR BUILD FOR TESTING PURPOSES ONLY**',
               '',
