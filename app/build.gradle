@@ -21,6 +21,9 @@ android {
         versionCode (System.currentTimeMillis() / 1000 as int)
         versionName "1.2.2-localbuild"
     }
+    buildFeatures {
+        buildConfig = true
+    }
     lintOptions {
         disable 'ExpiredTargetSdkVersion'
     }
