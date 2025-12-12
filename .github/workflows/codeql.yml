@@ -24,8 +24,9 @@ jobs:
         include:
         - language: actions
           build-mode: none
-        - language: java-kotlin
-          build-mode: manual
+        # Disabled as Kotlin version 2.3.0-RC3 is too recent. CodeQL currently supports versions below 2.2.30
+        # - language: java-kotlin
+        #   build-mode: manual
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
