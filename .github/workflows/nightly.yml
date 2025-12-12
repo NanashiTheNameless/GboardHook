@@ -42,7 +42,7 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: zulu
-          java-version: "25"
+          java-version: "21"
 
       - name: Ensure keystore directory exists
         run: mkdir -p app/AndroidKeystore
