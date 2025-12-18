@@ -158,7 +158,7 @@ jobs:
           echo "apk_name=$apk_name" >> "$GITHUB_OUTPUT"
 
       - name: Upload debug APK as artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug
           path: ${{ steps.locate_apk.outputs.apk_path }}
