@@ -5,75 +5,16 @@ on:
     branches:
       - main
       - master
-  issue_comment:
-    types: [created]
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
 
 concurrency:
   group: pr-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  check-rebuild-command:
-    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && github.event.comment.body == '/rebuild'
-    runs-on: ubuntu-latest
-    outputs:
-      is_owner: ${{ steps.check_owner.outputs.is_owner }}
-    steps:
-      - name: Check if commenter is repo owner
-        id: check_owner
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const comment = context.payload.comment;
-            const repo = context.repo;
-            
-            // Get repository info to find owner
-            const repoInfo = await github.rest.repos.get({
-              owner: repo.owner,
-              repo: repo.repo
-            });
-            
-            const repoOwner = repoInfo.data.owner.login;
-            const commenter = comment.user.login;
-            
-            console.log(`Repository owner: ${repoOwner}`);
-            console.log(`Commenter: ${commenter}`);
-            
-            if (commenter === repoOwner) {
-              core.setOutput('is_owner', 'true');
-              // React with checkmark to acknowledge
-              await github.rest.reactions.createForIssueComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                comment_id: comment.id,
-                content: 'rocket'
-              });
-            } else {
-              core.setOutput('is_owner', 'false');
-              // React with confused to indicate not authorized
-              await github.rest.reactions.createForIssueComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                comment_id: comment.id,
-                content: 'confused'
-              });
-              
-              await github.rest.issues.createComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                issue_number: context.issue.number,
-                body: '[ERROR] Only the repository owner can trigger rebuilds.'
-              });
-            }
-
   build-debug:
-    if: always() && (github.event_name == 'pull_request' || (github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true'))
-    needs: [check-rebuild-command]
     runs-on: ubuntu-latest
 
     steps:
@@ -81,22 +22,12 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref || github.head_ref }}
 
-      - name: Post rebuild trigger comment
-        if: github.event_name == 'issue_comment' && needs.check-rebuild-command.outputs.is_owner == 'true'
-        id: rebuild_comment
-        uses: actions/github-script@v8
-        with:
-          script: |
-            const response = await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: '[REBUILD] Rebuild triggered by repository owner. Starting new build...'
-            });
-            core.setOutput('comment_id', response.data.id);
-            core.exportVariable('REBUILD_COMMENT_ID', response.data.id);
+      - name: Save PR number
+        run: |
+          mkdir -p ./pr
+          echo ${{ github.event.pull_request.number }} > ./pr/NR
+          echo ${{ github.event.pull_request.head.sha }} > ./pr/SHA
 
       - name: Gather variables
         id: vars
@@ -107,11 +38,7 @@ jobs:
           DATE=$(date -u +'%Y.%m.%d')
           echo "DATE=$DATE"
           echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
-          if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            PR_NUMBER=${{ github.event.issue.number }}
-          else
-            PR_NUMBER=${{ github.event.pull_request.number || 'manual' }}
-          fi
+          PR_NUMBER=${{ github.event.pull_request.number }}
           echo "PR_NUMBER=$PR_NUMBER"
           echo "PR_NUMBER=$PR_NUMBER" >> "$GITHUB_OUTPUT"
 
@@ -160,76 +87,9 @@ jobs:
       - name: Upload debug APK as artifact
         uses: actions/upload-artifact@v6
         with:
-          name: GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug
-          path: ${{ steps.locate_apk.outputs.apk_path }}
+          name: pr-build-${{ steps.vars.outputs.PR_NUMBER }}
+          path: |
+            pr/
+            ${{ steps.locate_apk.outputs.apk_path }}
           retention-days: 14
           if-no-files-found: error
-
-      - name: Comment on PR with download link
-        if: always() && steps.locate_apk.outputs.apk_path
-        uses: actions/github-script@v8
-        with:
-          script: |
-            let prNumber;
-            if (context.eventName === 'issue_comment') {
-              prNumber = context.payload.issue.number;
-            } else {
-              prNumber = context.payload.pull_request.number;
-            }
-            
-            const runId = context.runId;
-            const repo = context.repo;
-            const rebuildCommentId = process.env.REBUILD_COMMENT_ID || '';
-            const heading = context.eventName === 'issue_comment' ? '## [BUILD] Testing/Debug Build Ready (rebuild complete)' : '## [BUILD] Testing/Debug Build Ready';
-            const lines = [
-              heading,
-              '',
-              'A debug APK has been built for this PR and is available for 14 days.',
-              '',
-              `**Download**: [GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug](https://nightly.link/${repo.owner}/${repo.repo}/actions/runs/${runId}/GboardHook-PR${{ steps.vars.outputs.PR_NUMBER }}-debug)`,
-              '',
-              '**Build Info**:',
-              `- Commit: \`${{ steps.vars.outputs.GIT_SHA7 }}\``,
-              `- Date: \`${{ steps.vars.outputs.DATE }}\``,
-              `- APK: \`${{ steps.locate_apk.outputs.apk_name }}\``,
-              '',
-              '---',
-              '',
-              '## ⚠ CRITICAL WARNING - READ BEFORE DOWNLOADING ⚠',
-              '',
-              '**THIS IS AN UNTESTED PR BUILD FOR TESTING PURPOSES ONLY**',
-              '',
-              '⚠ DANGER - USE AT YOUR OWN RISK ⚠',
-              '',
-              '- ✖ NOT SAFE: This build has NOT been reviewed or tested for security vulnerabilities',
-              '- ✖ UNVERIFIED CODE: Contains unreviewed code changes that may be malicious or buggy',
-              '- ✖ NO WARRANTY: This build comes with ABSOLUTELY NO WARRANTY of any kind',
-              '- ✖ POTENTIAL RISKS: May contain malware, backdoors, data theft code, or cause device instability',
-              '- ⏲ TEMPORARY KEY: Signed with a debug key that expires in 14 days',
-              '',
-              '⚠ WARNING: DO NOT INSTALL UNLESS:',
-              '- ✔ You are an experienced developer who understands the risks',
-              '- ✔ You have reviewed the PR code changes thoroughly',
-              '- ✔ You accept full responsibility for any damage or data loss',
-              '- ✔ You understand this may compromise your device security',
-              '',
-              '**BY DOWNLOADING THIS BUILD, YOU ACKNOWLEDGE AND ACCEPT ALL RISKS.**',
-              ''
-            ];
-            const commentBody = lines.join('\n');
-            
-            if (context.eventName === 'issue_comment' && rebuildCommentId) {
-              await github.rest.issues.updateComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                comment_id: Number(rebuildCommentId),
-                body: commentBody
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: repo.owner,
-                repo: repo.repo,
-                issue_number: prNumber,
-                body: commentBody
-              });
-            }
