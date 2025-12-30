@@ -5,7 +5,7 @@ on:
     inputs:
       pr_number:
         required: true
-        type: number
+        type: string
       pr_sha:
         required: true
         type: string
@@ -17,14 +17,10 @@ on:
         type: string
       run_id:
         required: true
-        type: number
+        type: string
       retention_days:
         required: true
-        type: number
-
-permissions:
-  pull-requests: write
-  issues: write
+        type: string
 
 jobs:
   comment:
