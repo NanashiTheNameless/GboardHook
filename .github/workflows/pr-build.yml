@@ -95,6 +95,9 @@ jobs:
 
   post-comment:
     needs: build-debug
+    permissions:
+      pull-requests: write
+      issues: write
     uses: ./.github/workflows/pr-comment.yml
     with:
       pr_number: ${{ needs.build-debug.outputs.pr_number }}
