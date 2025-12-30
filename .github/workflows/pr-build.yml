@@ -16,18 +16,17 @@ concurrency:
 jobs:
   build-debug:
     runs-on: ubuntu-latest
+    outputs:
+      pr_number: ${{ steps.vars.outputs.PR_NUMBER }}
+      pr_sha: ${{ github.event.pull_request.head.sha }}
+      apk_name: ${{ steps.rename.outputs.apk_name }}
+      artifact_name: ${{ steps.rename.outputs.artifact_name }}
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.pull_request.number }} > ./pr/NR
-          echo ${{ github.event.pull_request.head.sha }} > ./pr/SHA
 
       - name: Gather variables
         id: vars
@@ -62,7 +61,7 @@ jobs:
             -alias debug-pr-key \
             -keyalg RSA \
             -keysize 2048 \
-            -validity 14 \
+            -validity 7 \
             -storepass debug-pr-password \
             -keypass debug-pr-password \
             -dname "CN=GitHub PR Debug Key, OU=CI, O=GboardHook-PR-Test-Build"
@@ -76,20 +75,31 @@ jobs:
         run: |
           ./gradlew --no-daemon assembleDebug
 
-      - name: Locate APK
-        id: locate_apk
+      - name: Rename APK for PR
+        id: rename
         run: |
-          apk_path=$(ls app/build/outputs/apk/debug/*.apk | head -n 1)
-          echo "apk_path=$apk_path" >> "$GITHUB_OUTPUT"
-          apk_name=$(basename "$apk_path")
+          original_apk=$(ls app/build/outputs/apk/debug/*.apk | head -n 1)
+          apk_name="GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}.apk"
+          mv "$original_apk" "app/build/outputs/apk/debug/$apk_name"
           echo "apk_name=$apk_name" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=pr-build-${{ steps.vars.outputs.PR_NUMBER }}" >> "$GITHUB_OUTPUT"
 
-      - name: Upload debug APK as artifact
+      - name: Upload artifacts
+        id: upload
         uses: actions/upload-artifact@v6
         with:
           name: pr-build-${{ steps.vars.outputs.PR_NUMBER }}
-          path: |
-            pr/
-            ${{ steps.locate_apk.outputs.apk_path }}
-          retention-days: 14
+          path: app/build/outputs/apk/debug/GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}.apk
+          retention-days: 7
           if-no-files-found: error
+
+  post-comment:
+    needs: build-debug
+    uses: ./.github/workflows/pr-comment.yml
+    with:
+      pr_number: ${{ needs.build-debug.outputs.pr_number }}
+      pr_sha: ${{ needs.build-debug.outputs.pr_sha }}
+      apk_name: ${{ needs.build-debug.outputs.apk_name }}
+      artifact_name: ${{ needs.build-debug.outputs.artifact_name }}
+      run_id: ${{ github.run_id }}
+      retention_days: 7
