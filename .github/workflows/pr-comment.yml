@@ -43,7 +43,7 @@ jobs:
               '',
               `A debug APK has been built for this PR and is available for ${retentionDays} days.`,
               '',
-              `**Download**: [${apkName}](https://nightly.link/${owner}/${repo}/actions/runs/${runId}/${artifactName})`,
+              `**Download**: [${artifactName}](https://nightly.link/${owner}/${repo}/actions/runs/${runId}/${artifactName})`,
               '',
               '**Build Info**:',
               `- Commit: \`${prSha.substring(0, 7)}\``,

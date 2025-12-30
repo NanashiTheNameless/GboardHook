@@ -54,7 +54,7 @@ jobs:
       - name: Ensure keystore directory exists
         run: mkdir -p app/AndroidKeystore
 
-      - name: Generate temporary debug keystore with 14-day validity
+      - name: Generate temporary debug keystore with 7-day validity
         run: |
           keytool -genkeypair \
             -keystore app/AndroidKeystore/debug-pr.jks \
@@ -79,17 +79,17 @@ jobs:
         id: rename
         run: |
           original_apk=$(ls app/build/outputs/apk/debug/*.apk | head -n 1)
-          apk_name="GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}.apk"
+          apk_name="GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}.apk"
           mv "$original_apk" "app/build/outputs/apk/debug/$apk_name"
           echo "apk_name=$apk_name" >> "$GITHUB_OUTPUT"
-          echo "artifact_name=pr-build-${{ steps.vars.outputs.PR_NUMBER }}" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}" >> "$GITHUB_OUTPUT"
 
       - name: Upload artifacts
         id: upload
         uses: actions/upload-artifact@v6
         with:
-          name: pr-build-${{ steps.vars.outputs.PR_NUMBER }}
-          path: app/build/outputs/apk/debug/GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}.apk
+          name: GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}
+          path: app/build/outputs/apk/debug/GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}.apk
           retention-days: 7
           if-no-files-found: error
 
