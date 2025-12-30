@@ -22,6 +22,10 @@ on:
         required: true
         type: string
 
+permissions:
+  pull-requests: write
+  issues: write
+
 jobs:
   pr-comment:
     runs-on: ubuntu-latest
