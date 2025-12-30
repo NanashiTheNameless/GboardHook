@@ -23,7 +23,7 @@ on:
         type: string
 
 jobs:
-  comment:
+  pr-comment:
     runs-on: ubuntu-latest
     steps:
       - name: Comment on PR

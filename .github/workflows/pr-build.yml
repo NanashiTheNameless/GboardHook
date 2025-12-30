@@ -93,7 +93,7 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
-  post-comment:
+  pr-comment:
     needs: build-debug
     permissions:
       pull-requests: write
