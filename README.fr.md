@@ -1,10 +1,10 @@
 # GboardHook-NanashiTheNameless
 
-**Tous les crédits vont à <https://github.com/chenyue404/GboardHook> Ceci est un fork modifié et traduit pour mon usage personnel**
+**Tous les crédits vont à <https://github.com/chenyue404/GboardHook>. Ceci est un fork modifié et traduit pour mon usage personnel**
 
-Modifie le nombre d'éléments du presse-papiers affichés et leur durée de conservation
+Modifie le nombre d'éléments du presse-papiers de Gboard affichés et leur durée de conservation
 
-enable_clipboard_entity_extraction et enable_clipboard_query_refactoring affectent le nombre d'entrées du presse-papiers qui peuvent être lues. Le principe n'est pas clair et le code clé n'a pas été trouvé, ils ne peuvent donc actuellement être codés en dur que comme false
+enable_clipboard_entity_extraction et enable_clipboard_query_refactoring affectent le nombre d'entrées du presse-papiers qui peuvent être lues. Le principe n'est pas clair et le code clé n'a pas été trouvé, donc ceux-ci ne peuvent actuellement être codés en dur que comme false
 
 ## Langues Supportées
 

@@ -1,10 +1,10 @@
 # GboardHook-NanashiTheNameless
 
-**すべてのクレジットは <https://github.com/chenyue404/GboardHook> に帰属します。これは個人的な使用のために修正・翻訳されたフォークです**
+**すべてのクレジットは <https://github.com/chenyue404/GboardHook> に帰属します。これは個人的な使用のために修正および翻訳されたフォークです**
 
-Gboard クリップボードに表示される項目数と保持時間を変更します
+Gboard クリップボードに表示される項目の数と保持時間を変更します
 
-enable_clipboard_entity_extraction と enable_clipboard_query_refactoring は読み取ることができるクリップボードエントリの数に影響します。原理は不明で、キーコードはまだ見つかっていないため、現在のところはこれらの設定を false にハードコードするしかできません
+enable_clipboard_entity_extraction と enable_clipboard_query_refactoring は読み取ることができるクリップボード エントリの数に影響します。原理は不明で、キー コードはまだ見つかっていないため、これらは現在のところ false にハードコードすることしかできません
 
 ## サポートされている言語
 

@@ -1,10 +1,10 @@
 # GboardHook-NanashiTheNameless
 
-**Todos los créditos van a <https://github.com/chenyue404/GboardHook> Este es un fork modificado y traducido para mi uso personal**
+**Todos los créditos van a <https://github.com/chenyue404/GboardHook>. Este es un fork modificado y traducido para mi uso personal**
 
-Modifica la cantidad de elementos del portapapeles que se muestran y su tiempo de retención
+Modifica la cantidad de elementos del portapapeles de Gboard que se muestran y su tiempo de conservación
 
-enable_clipboard_entity_extraction y enable_clipboard_query_refactoring afectan la cantidad de entradas del portapapeles que pueden leerse. El principio no está claro y aún no se ha encontrado el código clave, por lo que actualmente solo se pueden codificar como false
+enable_clipboard_entity_extraction y enable_clipboard_query_refactoring afectan la cantidad de entradas del portapapeles que se pueden leer. El principio no está claro y el código clave aún no se ha encontrado, por lo que estos solo pueden codificarse como false por ahora
 
 ## Idiomas Soportados
 

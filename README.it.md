@@ -1,10 +1,10 @@
 # GboardHook-NanashiTheNameless
 
-**Tutti i crediti vanno a <https://github.com/chenyue404/GboardHook> Questo è un fork modificato e tradotto per uso personale**
+**Tutti i crediti vanno a <https://github.com/chenyue404/GboardHook>. Questo è un fork modificato e tradotto per uso personale**
 
-Modifica il numero di elementi degli appunti visualizzati e il tempo di conservazione
+Modifica il numero di elementi della clipboard di Gboard visualizzati e il loro tempo di conservazione
 
-enable_clipboard_entity_extraction e enable_clipboard_query_refactoring influenzano il numero di voci degli appunti che possono essere lette. Il principio non è chiaro e il codice chiave non è stato trovato, quindi attualmente possono essere solo codificati come false
+enable_clipboard_entity_extraction e enable_clipboard_query_refactoring influenzano il numero di voci della clipboard che possono essere lette. Il principio non è chiaro e il codice chiave non è stato trovato, quindi questi possono attualmente essere solo codificati come false
 
 ## Lingue Supportate
 

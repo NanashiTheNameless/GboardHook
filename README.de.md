@@ -1,8 +1,8 @@
 # GboardHook-NanashiTheNameless
 
-**Alle Verdienste gehen an <https://github.com/chenyue404/GboardHook> Dies ist ein modifizierter und übersetzter Fork für meine private Nutzung**
+**Alle Verdienste gehen an <https://github.com/chenyue404/GboardHook>. Dies ist ein modifizierter und übersetzter Fork für meine private Nutzung**
 
-Bearbeitet die Anzahl der angezeigten Zwischenablage-Einträge und deren Aufbewahrungsdauer
+Bearbeitet die Anzahl der angezeigten Gboard-Zwischenablage-Einträge und deren Aufbewahrungsdauer
 
 enable_clipboard_entity_extraction und enable_clipboard_query_refactoring beeinflussen die Anzahl der Zwischenablage-Einträge, die gelesen werden können. Das Prinzip ist unklar und der Schlüsselcode wurde noch nicht gefunden, daher können diese derzeit nur auf false gesetzt werden
 

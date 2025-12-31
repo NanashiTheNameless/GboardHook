@@ -1,10 +1,10 @@
 # GboardHook-NanashiTheNameless
 
-**所有荣誉归于 <https://github.com/chenyue404/GboardHook> 本项目是为个人使用而修改和翻译的分支**
+**所有荣誉归于 <https://github.com/chenyue404/GboardHook>。本项目是为个人使用而修改和翻译的分支**
 
-修改 Gboard 剪贴板的显示条数和保留时间
+修改 Gboard 剪贴板显示的项目数及其保留时间
 
-enable_clipboard_entity_extraction 和 enable_clipboard_query_refactoring 会影响能读取的剪贴板条目数量。原理不明确，关键代码尚未找到，因此目前只能将这些设置硬编码为 false
+enable_clipboard_entity_extraction 和 enable_clipboard_query_refactoring 会影响能读取的剪贴板条目数量。原理不明确，关键代码尚未找到，因此这些设置目前只能硬编码为 false
 
 ## 支持的语言
 
