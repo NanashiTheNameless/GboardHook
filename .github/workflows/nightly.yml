@@ -44,6 +44,15 @@ jobs:
           distribution: zulu
           java-version: "25"
 
+      - name: Set up Gradle cache
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            jdks
+
       - name: Ensure keystore directory exists
         run: mkdir -p app/AndroidKeystore
 
@@ -58,7 +67,7 @@ jobs:
           KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
-          ./gradlew --no-daemon assembleRelease
+          ./gradlew assembleRelease --build-cache
 
       - name: Locate APK
         id: locate_apk
