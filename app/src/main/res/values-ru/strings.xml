@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">Игнорировать ограничение на имя пакета\n(Включите, если вы изменили имя пакета Gboard)</string>
+    <string name="log_switch">Включить дополнительное отладочное логирование</string>
+    <string name="clipboard_capacity_hint">Емкость буфера обмена, по умолчанию 10</string>
+    <string name="clipboard_retention_hint">Время удержания буфера обмена, по умолчанию 3 дня, в миллисекундах</string>
+    <string name="apply">Применить</string>
+    <string name="restart_requirement">После применения требуется перезагрузка Gboard</string>
+    <string name="first_setup">При первоначальной настройке требуется перезагрузка телефона</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">Этот модифицированный форк от NanashiTheNameless</string>
+    <string name="original_credit">Оригинал от chenyue404</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">Paketnamenbeschränkung ignorieren\n(Aktivieren, wenn Sie den Gboard-Paketnamen geändert haben)</string>
+    <string name="log_switch">Zusätzliches Debug-Logging aktivieren</string>
+    <string name="clipboard_capacity_hint">Zwischenablagekapazität, Standard 10</string>
+    <string name="clipboard_retention_hint">Aufbewahrungszeit der Zwischenablage, Standard 3 Tage, in Millisekunden</string>
+    <string name="apply">Anwenden</string>
+    <string name="restart_requirement">Nach dem Anwenden muss Gboard neu gestartet werden</string>
+    <string name="first_setup">Bei der ersten Konfiguration ist ein Neustart des Telefons erforderlich</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">Dieser modifizierte Fork stammt von NanashiTheNameless</string>
+    <string name="original_credit">Das Original stammt von chenyue404</string>
+</resources>

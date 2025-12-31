@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">패키지 이름 제한 무시\n(Gboard 패키지 이름을 변경한 경우 활성화하십시오)</string>
+    <string name="log_switch">추가 디버그 로깅 활성화</string>
+    <string name="clipboard_capacity_hint">클립보드 용량, 기본값 10</string>
+    <string name="clipboard_retention_hint">클립보드 보유 시간, 기본값 3일, 밀리초 단위</string>
+    <string name="apply">적용</string>
+    <string name="restart_requirement">적용 후 Gboard를 재시작해야 합니다</string>
+    <string name="first_setup">처음 설정 시 휴대폰 재시작이 필요합니다</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">이 수정된 포크는 NanashiTheNameless가 만들었습니다</string>
+    <string name="original_credit">원본은 chenyue404가 만들었습니다</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">パッケージ名の制限を無視\n(Gboardのパッケージ名を変更した場合は有効にしてください)</string>
+    <string name="log_switch">追加のデバッグログを有効にする</string>
+    <string name="clipboard_capacity_hint">クリップボード容量、デフォルト10</string>
+    <string name="clipboard_retention_hint">クリップボード保持時間、デフォルト3日、ミリ秒単位</string>
+    <string name="apply">適用</string>
+    <string name="restart_requirement">適用後、Gboardを再起動する必要があります</string>
+    <string name="first_setup">初回セットアップではスマートフォンの再起動が必要です</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">この修正されたフォークはNanashiTheNamelessによるものです</string>
+    <string name="original_credit">オリジナルはchenyue404によるものです</string>
+</resources>

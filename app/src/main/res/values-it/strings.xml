@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">Ignora restrizione nome pacchetto\n(Abilita se hai modificato il nome del pacchetto Gboard)</string>
+    <string name="log_switch">Abilita logging debug aggiuntivo</string>
+    <string name="clipboard_capacity_hint">Capacità degli appunti, predefinito 10</string>
+    <string name="clipboard_retention_hint">Tempo di conservazione degli appunti, predefinito 3 giorni, in millisecondi</string>
+    <string name="apply">Applica</string>
+    <string name="restart_requirement">Dopo l\'applicazione, Gboard deve essere riavviato</string>
+    <string name="first_setup">Alla prima configurazione è necessario riavviare il telefono</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">Questo fork modificato è di NanashiTheNameless</string>
+    <string name="original_credit">L\'originale è di chenyue404</string>
+</resources>

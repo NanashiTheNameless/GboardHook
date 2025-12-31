@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">忽略软件包名称限制\n(如果您更改了Gboard软件包名称，请启用)</string>
+    <string name="log_switch">启用额外的调试日志</string>
+    <string name="clipboard_capacity_hint">剪贴板容量，默认10</string>
+    <string name="clipboard_retention_hint">剪贴板保留时间，默认3天，单位为毫秒</string>
+    <string name="apply">应用</string>
+    <string name="restart_requirement">应用后需要重启Gboard</string>
+    <string name="first_setup">首次设置需要重启手机</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">此修改的fork由NanashiTheNameless创建</string>
+    <string name="original_credit">原始项目由chenyue404创建</string>
+</resources>

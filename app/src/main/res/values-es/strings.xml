@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ignore_package_name_restriction">Ignorar restricción de nombre de paquete\n(Habilitar si cambió el nombre del paquete de Gboard)</string>
+    <string name="log_switch">Habilitar registro de depuración adicional</string>
+    <string name="clipboard_capacity_hint">Capacidad del portapapeles, predeterminado 10</string>
+    <string name="clipboard_retention_hint">Tiempo de retención del portapapeles, predeterminado 3 días, en milisegundos</string>
+    <string name="apply">Aplicar</string>
+    <string name="restart_requirement">Después de aplicar, Gboard necesita reiniciarse</string>
+    <string name="first_setup">En la primera configuración se requiere reiniciar el teléfono</string>
+    <string name="repo_link">https://github.com/NanashiTheNameless/GboardHook</string>
+    <string name="fork_credit">Este fork modificado es de NanashiTheNameless</string>
+    <string name="original_credit">El original es de chenyue404</string>
+</resources>
