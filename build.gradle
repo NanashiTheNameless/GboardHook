@@ -15,6 +15,15 @@ buildscript {
     }
 }
 
+allprojects {
+    configurations.all {
+        resolutionStrategy {
+            // Force jose4j 0.9.6+ to patch CVE (DoS vulnerability in < 0.9.6)
+            force 'org.bitbucket.b_c:jose4j:0.9.6'
+        }
+    }
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
