@@ -86,7 +86,7 @@ jobs:
 
       - name: Upload artifacts
         id: upload
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}
           path: app/build/outputs/apk/debug/GboardHook-pr-build-${{ steps.vars.outputs.PR_NUMBER }}-${{ steps.vars.outputs.GIT_SHA7 }}.apk
