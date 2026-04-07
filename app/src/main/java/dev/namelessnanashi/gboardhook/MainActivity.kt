@@ -64,8 +64,19 @@ class MainActivity : Activity() {
             val num = et0.text.toString().toIntOrNull() ?: PluginEntry.DEFAULT_NUM
             val time = et1.text.toString().toLongOrNull() ?: PluginEntry.DEFAULT_TIME
             val switchOn = sw0.isChecked.toString()
+            val config = "$num,$time,$switchOn"
+
+            val remotePref = App.service?.getRemotePreferences(PluginEntry.SP_FILE_NAME)
+            if (remotePref != null) {
+                remotePref.edit().apply {
+                    putString(PluginEntry.SP_KEY, config)
+                    putBoolean(PluginEntry.SP_KEY_LOG, swLog.isChecked)
+                    apply()
+                }
+            }
+
             pref?.edit()?.apply {
-                putString(PluginEntry.SP_KEY, "$num,$time,$switchOn")
+                putString(PluginEntry.SP_KEY, config)
                 putBoolean(PluginEntry.SP_KEY_LOG, swLog.isChecked)
                 apply()
             }
