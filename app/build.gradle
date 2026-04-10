@@ -6,6 +6,8 @@ plugins {
 
 def keystorePropertiesFile = file("./AndroidKeystore/keystore.properties")
 def keystoreProperties = new Properties()
+def releaseKeystoreFile = file(System.getenv("KEYSTORE_FILE") ?: "AndroidKeystore/release-key.jks")
+def hasReleaseKeystore = releaseKeystoreFile.exists()
 
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
@@ -26,7 +28,7 @@ android {
     }
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE_FILE") ?: "AndroidKeystore/release-key.jks")
+            storeFile releaseKeystoreFile
             storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
             keyAlias System.getenv("KEY_ALIAS") ?: ""
             keyPassword System.getenv("KEY_PASSWORD") ?: ""
@@ -34,7 +36,8 @@ android {
     }
     buildTypes {
         debug {
-            signingConfig = signingConfigs.release
+            // Fall back to the default debug keystore for local builds.
+            signingConfig = hasReleaseKeystore ? signingConfigs.release : signingConfigs.debug
             minifyEnabled = false
         }
         release {
