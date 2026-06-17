@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdk 36
+    compileSdk 37
 
     defaultConfig {
         applicationId "dev.namelessnanashi.gboardhook"
