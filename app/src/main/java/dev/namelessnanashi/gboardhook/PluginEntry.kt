@@ -299,21 +299,18 @@ class PluginEntry : XposedModule() {
 //        }
 
         tryHook("HashSet") { tag ->
-            findAndHookMethod(
-                HashSet::class.java,
-                "size",
-                object : XC_MethodHook() {
-                    override fun beforeHookedMethod(param: MethodHookParam) {
-                        val set = param.thisObject as HashSet<*>
-                        if (set.firstOrNull()?.javaClass?.name == "j\$.time.Instant") {
-                            val map = XposedHelpers.getObjectField(set, "map") as HashMap<*, *>
-                            if (map.size <= clipboardTextSize) {
-                                param.result = 5
-                            }
-                        }
+            val hashSetSizeMethod = HashSet::class.java.getDeclaredMethod("size").apply { isAccessible = true }
+            hook(hashSetSizeMethod).intercept { chain ->
+                val set = chain.thisObject as HashSet<*>
+                if (set.firstOrNull()?.javaClass?.name == "j\$.time.Instant") {
+                    val mapField = set.javaClass.getDeclaredField("map").apply { isAccessible = true }
+                    val map = mapField.get(set) as HashMap<*, *>
+                    if (map.size <= clipboardTextSize) {
+                        return@intercept 5
                     }
                 }
-            )
+                chain.proceed()
+            }
         }
 
 
