@@ -21,7 +21,7 @@ android {
         minSdk 31
         targetSdk 35
         versionCode (System.currentTimeMillis() / 1000 as int)
-        versionName "1.3.0-localbuild"
+        versionName "1.4.0-localbuild"
     }
     lintOptions {
         disable 'ExpiredTargetSdkVersion'

@@ -100,6 +100,7 @@ class PluginEntry : XposedModule() {
                     val spKeyMethod = "SP_KEY_METHOD"
                     val spKeyMethodReadConfig = "SP_KEY_METHOD_READ_CONFIG"
                     val spKeyVersion = "SP_KEY_VERSION"
+                    val spKeyMethodRetentionTimeConfig = "SP_KEY_METHOD_RETENTION_TIME"
                     val versionCode = try {
                         val pkgInfo = context.packageManager.getPackageInfo(
                             context.packageName,
@@ -164,6 +165,31 @@ class PluginEntry : XposedModule() {
                         method
                     })?.let {
                         hookReadConfig(it, classLoader)
+                    }
+
+                    val methodRetentionTimeStr = sp.getString(spKeyMethodRetentionTimeConfig, null)
+                    val dexMethodRetentionTimeConfig: DexMethod? = methodRetentionTimeStr?.let {
+                        try {
+                            DexMethod(it)
+                        } catch (e: Exception) {
+                            log("dexMethodRetentionTime-$it")
+                            log(Log.ERROR, TAG, "Parse DexMethodRetentionTime failed", e)
+                            null
+                        }
+                    }
+                    (if (isSameVersion && dexMethodRetentionTimeConfig != null) {
+                        dexMethodRetentionTimeConfig
+                    } else {
+                        val method = findRetentionTimeMethod(dexBridge)
+                        if (method != null) {
+                            sp.edit {
+                                putInt(spKeyVersion, versionCode)
+                                putString(spKeyMethodRetentionTimeConfig, method.serialize())
+                            }
+                        }
+                        method
+                    })?.let {
+                        hookRetentionTime(it, classLoader)
                     }
                 } catch (t: Throwable) {
                     log(Log.ERROR, TAG, "Init hook failed", t)
@@ -452,6 +478,22 @@ class PluginEntry : XposedModule() {
         return methodData.toDexMethod()
     }
 
+    private fun findRetentionTimeMethod(bridge: DexKitBridge): DexMethod? {
+        val methodData = bridge.findMethod {
+            matcher {
+                usingStrings("Failed to parse retention hours")
+//                returnType("java.lang.Long")
+            }
+        }.singleOrNull()
+        if (methodData == null) {
+            log("Can't find RetentionTimeMethod")
+            return null
+        } else {
+            log("findRetentionTimeMethod success: $methodData")
+        }
+        return methodData.toDexMethod()
+    }
+
     /**
      * Hardcode the value of enable_clipboard_entity_extraction, otherwise limit is always 100, and only 5 are retrieved
      */
@@ -493,6 +535,7 @@ class PluginEntry : XposedModule() {
             ""
         }
 
+
 //        tryHook(tag) {
 //            findAndHookMethod(
 //                className, classLoader, "a",
@@ -514,5 +557,21 @@ class PluginEntry : XposedModule() {
 //                    }
 //                })
 //        }
+    }
+
+    private fun hookRetentionTime(dexMethod: DexMethod, classLoader: ClassLoader) {
+        val methodName = dexMethod.name
+        val className = dexMethod.className
+        val tag = "$className#$methodName"
+        log(tag)
+        tryHook(tag) {
+            val method = dexMethod.getMethodInstance(classLoader).apply {
+                isAccessible = true
+            }
+            hook(method).intercept { chain ->
+                chain.proceed()
+                clipboardTextTime
+            }
+        }
     }
 }
